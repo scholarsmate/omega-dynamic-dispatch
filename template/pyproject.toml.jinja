@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "{{ project_slug }}"
+version = "0.1.0"
+description = "{{ description }}"
+requires-python = ">={{ python_min }}"
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [{name = "{{ author }}"}]
+dependencies = ["click>=8.1"]
+
+[project.scripts]
+{{ project_slug }} = "{{ project_slug }}.cli:main"
+
+{% if use_entrypoints %}
+[project.entry-points."{{ project_slug }}.plugins"]
+# third-party plugins can register here
+{% endif %}
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]

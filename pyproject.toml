@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68", "setuptools-scm>=8", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "omega-dynamic-dispatch"
+dynamic = ["version"]
+description = "Template for a plugin-driven CLI with dynamic dispatch."
+readme = "README.md"
+requires-python = ">=3.10"
+license = {file = "LICENSE"}
+authors = [{name = "scholarsmate"}]
+
+[project.urls]
+Repository = "https://github.com/scholarsmate/omega-dynamic-dispatch"
+
+[tool.setuptools_scm]
+version_scheme = "release-branch-semver"
+local_scheme = "node-and-date"
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]

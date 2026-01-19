@@ -1,0 +1,31 @@
+_min_copier_version: "9.0"
+_subdirectory: "template"
+_templates_suffix: ".jinja"
+
+project_name:
+  type: str
+  default: "Omega Dynamic Dispatch CLI"
+
+description:
+  type: str
+  default: "Plugin-based CLI with dynamic dispatch (Click)"
+
+author:
+  type: str
+  default: ""
+
+project_slug:
+  type: str
+  default: "omega_cli"
+
+python_min:
+  type: str
+  default: "3.11"
+
+use_entrypoints:
+  type: bool
+  default: true
+
+license_year:
+  type: int
+  default: 2026

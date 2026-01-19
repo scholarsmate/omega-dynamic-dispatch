@@ -1,0 +1,46 @@
+# {{ project_name }}
+
+{{ description }}
+
+## Install (dev)
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -U pip
+python -m pip install -e .
+```
+
+## Use
+
+```bash
+{{ project_slug }} --help
+```
+
+## Add a new command
+
+Create a new file:
+
+`src/{{ project_slug }}/plugins/<verb>.py`
+
+Minimal example:
+
+```python
+from {{ project_slug }}.core.dispatch import command
+from {{ project_slug }}.core.results import ResultObject
+
+@command()
+def hello(results: ResultObject, *, name: str = "world") -> None:
+    """Say hello."""
+    results.add_event("hello", message="Hello", details={"name": name})
+```
+
+```python
+from {{ project_slug }}.core.dispatch import command
+from {{ project_slug }}.core.results import ResultObject
+
+@command()
+def hello(results: ResultObject, *, name: str = "world") -> None:
+    """Say hello."""
+    results.add_event("hello", message="Hello", details={"name": name})
+```
