@@ -12,9 +12,9 @@ class DataType(str, Enum):
     EVENTS = "events"
 
 
-@command()
-def ingest(results: ResultObject, *, data_type: DataType, data_file: IO[str]) -> None:
-    """Ingest a data file.
+@command("ingest")
+def ingest_func_example(results: ResultObject, *, data_type: DataType, data_file: IO[str]) -> None:
+    """Ingest a data file example.
 
     Args:
         data_type: Category of the file.

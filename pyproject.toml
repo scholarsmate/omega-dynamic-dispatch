@@ -17,6 +17,7 @@ Repository = "https://github.com/scholarsmate/omega-dynamic-dispatch"
 [tool.setuptools_scm]
 version_scheme = "release-branch-semver"
 local_scheme = "node-and-date"
+
 [tool.ruff]
 line-length = 100
 

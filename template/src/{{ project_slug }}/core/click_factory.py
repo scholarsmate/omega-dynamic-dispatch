@@ -3,7 +3,8 @@ import inspect
 import io
 import json
 from enum import Enum
-from typing import IO, Any, Callable, cast, get_origin, get_type_hints
+from types import UnionType
+from typing import IO, Any, Callable, Union, cast, get_args, get_origin, get_type_hints
 
 import click
 
@@ -16,22 +17,38 @@ def _flag(name: str) -> str:
     return "--" + name.replace("_", "-")
 
 
+def _unwrap_optional(ann: Any) -> Any:
+    """Return the non-None side of Optional/Union annotations when possible."""
+
+    origin = get_origin(ann)
+    if origin not in (Union, UnionType):
+        return ann
+
+    args = get_args(ann)
+    non_none = [a for a in args if a is not type(None)]
+    if len(non_none) == 1 and len(non_none) != len(args):
+        return non_none[0]
+    return ann
+
+
 def _is_io(ann: Any) -> bool:
-    if isinstance(ann, str):
-        normalized = ann.replace("typing.", "")
+    base = _unwrap_optional(ann)
+
+    if isinstance(base, str):
+        normalized = base.replace("typing.", "")
         if normalized == "IO" or normalized.startswith("IO["):
             return True
         return False
 
-    origin = get_origin(ann)
+    origin = get_origin(base)
     # collections.abc may not define IO in all environments; access it safely.
     abc_io = getattr(collections.abc, "IO", None)
-    if ann in (IO, io.IOBase, io.TextIOBase):
+    if base in (IO, io.IOBase, io.TextIOBase):
         return True
     if origin is not None and (origin is IO or (abc_io is not None and origin is abc_io)):
         return True
     try:
-        return isinstance(ann, type) and issubclass(ann, io.IOBase)
+        return isinstance(base, type) and issubclass(base, io.IOBase)
     except TypeError:
         return False
 
@@ -78,7 +95,7 @@ def _exit_code_from_events(results: ResultObject, *, bug: bool) -> int:
     return 2
 
 
-def build_cli(prog_name: str) -> click.Group:
+def build_cli(prog_name: str, *, return_results: bool = False) -> click.Group:
     @click.group(name=prog_name)
     @click.option(
         "--output",
@@ -117,7 +134,9 @@ def build_cli(prog_name: str) -> click.Group:
                 raise RuntimeError(f"{verb}: params after results must be keyword-only")
 
         def make_callback(
-            fn: Callable[..., Any], sig: inspect.Signature, enum_params: dict[str, type[Enum]]
+            fn: Callable[..., Any],
+            sig: inspect.Signature,
+            enum_params: dict[str, type[Enum]],
         ):
             def callback(**kwargs: Any) -> None:
                 ctx = click.get_current_context()
@@ -152,7 +171,12 @@ def build_cli(prog_name: str) -> click.Group:
                     )
 
                 _render(results, output=output, quiet=quiet)
-                raise SystemExit(_exit_code_from_events(results, bug=bug))
+                exit_code = _exit_code_from_events(results, bug=bug)
+
+                if return_results:
+                    return results, exit_code
+
+                raise SystemExit(exit_code)
 
             return callback
 
@@ -169,6 +193,7 @@ def build_cli(prog_name: str) -> click.Group:
                 p.name,
                 p.annotation if p.annotation is not inspect.Parameter.empty else str,
             )
+            ann = _unwrap_optional(ann)
             has_default = p.default is not inspect.Parameter.empty
             default = None if not has_default else p.default
             required = not has_default

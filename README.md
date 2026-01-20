@@ -1,6 +1,7 @@
 # Omega Dynamic Dispatch (ODD)
 
 [![CI](https://github.com/scholarsmate/omega-dynamic-dispatch/actions/workflows/ci.yml/badge.svg)](https://github.com/scholarsmate/omega-dynamic-dispatch/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/github/v/tag/scholarsmate/omega-dynamic-dispatch?label=version)](https://github.com/scholarsmate/omega-dynamic-dispatch/releases)
 
 Omega Dynamic Dispatch (ODD) is a Copier template that generates a **plugin-based Click CLI** with dict-backed dynamic dispatch.
 

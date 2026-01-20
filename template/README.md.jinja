@@ -39,8 +39,13 @@ def hello(results: ResultObject, *, name: str = "world") -> None:
 from {{ project_slug }}.core.dispatch import command
 from {{ project_slug }}.core.results import ResultObject
 
-@command()
-def hello(results: ResultObject, *, name: str = "world") -> None:
-    """Say hello."""
-    results.add_event("hello", message="Hello", details={"name": name})
+@command(verb="report", summary="Show a short summary", positional=False)
+def summarize(results: ResultObject, *, verbose: bool = False, limit: int = 5) -> None:
+    """Demonstrates custom verb, summary, and option-only params."""
+
+    results.add_event(
+        "report",
+        message="Summary complete",
+        details={"verbose": verbose, "limit": limit},
+    )
 ```
